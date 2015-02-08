@@ -69,33 +69,45 @@ while($line = <INFILE>) {
     $line =~ s/%//g;
     $line =~ s/\|//g;
     
+    # Convert every word to lowercase
+    $line = lc $line;
+    
     # Filter titles with non-English characters
     if($line =~ m{^[[:ascii:]]+$}) {
         $numTracks = $numTracks + 1;
+        
+        # Split each title into words and add each unique word to hash mapped to frequency
+        @words = split(' ', $line);
+        for $key (@words) {
+            $hash{$key}++;
+        }
+        
+        $word1;
+        $word2;
+        $i;
+        
+        # Create references to each pair of words in the words array
+        for $i (0 .. $words) {
+            $word1 = $words[$i];
+            if($i != $words) {
+            $word2 = $words[$i+1];
+            }
+            
+        }
     }
-    
-    # Split each title into words and add each unique word to hash mapped to frequency
-    @words = split(' ', $line);
-    for $key (@words) {
-        $hash{$key}++;
-    }
-    
-	# YOUR CODE BELOW...
-    
-    # Hash of Hashes
-    # Found this: http://perldoc.perl.org/perldsc.html
-    #
-    # %HashOfHash = (
-    #                something => {
-    #                     word1 => word2
-    #                     },
-    #                nothing => {
-    #                     word3 => word4
-    #                     },
-    #                );
-}
+} # End while loop, done parsing file
 
-# End while loop, done parsing file
+# Hash of Hashes
+# Found this: http://perldoc.perl.org/perldsc.html
+#
+# %HashOfHash = (
+#                something => {
+#                     word1 => word2
+#                     },
+#                nothing => {
+#                     word3 => word4
+#                     },
+#                );
 
 # Print the frequency of each unique word in the list of song titles
 for $key (keys %hash) {
