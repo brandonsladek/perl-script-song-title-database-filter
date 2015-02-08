@@ -6,9 +6,6 @@
 #										
 #########################################
 
-use strict;
-use warnings;
-
 # Replace the string value of the following variable with your names.
 my $name = "<Brandon Sladek>";
 my $partner = "<Drew Antonich>";
@@ -26,7 +23,9 @@ open(INFILE, $ARGV[0]) or die "Cannot open $ARGV[0]: $!.\n";
 
 # YOUR VARIABLE DEFINITIONS HERE...
 
-$title;
+$numTracks = 0;
+@words;
+%hash;
 
 # This loops through each line of the file
 while($line = <INFILE>) {
@@ -47,7 +46,7 @@ while($line = <INFILE>) {
     # Replace everything after the first [ with nothing
     $line =~ s/\[.*//;
     
-    # replacing brackets and punctuation marks
+    # Replace brackets and punctuation marks
     $line =~ s/\\//g;
     $line =~ s/\///g;
     $line =~ s/_//g;
@@ -70,13 +69,17 @@ while($line = <INFILE>) {
     $line =~ s/%//g;
     $line =~ s/\|//g;
     
-    if(!($line =~ m/\w|\s|\'/g)) {
-        # Doesn't match, don't add to data structure
+    # Filter titles with non-English characters
+    if($line =~ m{^[[:ascii:]]+$}) {
+        $numTracks = $numTracks + 1;
     }
     
-    # We don't actually want to print anything yet...
-    print $line;
-
+    # Split each title into words and add each unique word to hash mapped to frequency
+    @words = split(' ', $line);
+    for $key (@words) {
+        $hash{$key}++;
+    }
+    
 	# YOUR CODE BELOW...
     
     # Hash of Hashes
@@ -91,6 +94,17 @@ while($line = <INFILE>) {
     #                     },
     #                );
 }
+
+# End while loop, done parsing file
+
+# Print the frequency of each unique word in the list of song titles
+for $key (keys %hash) {
+    print "$key: ", $hash{$key}, "\n";
+}
+
+print "-----------------------------------\n";
+print "The number of tracks is: $numTracks\n";
+print "-----------------------------------\n";
 
 # Close the file handle
 close INFILE; 
