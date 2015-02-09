@@ -22,10 +22,14 @@ open(INFILE, $ARGV[0]) or die "Cannot open $ARGV[0]: $!.\n";
 
 
 # YOUR VARIABLE DEFINITIONS HERE...
-
+$lastline;
 $numTracks = 0;
 @words;
 %hash;
+%ihash;
+$word1;
+$word2;
+$i;
 
 # This loops through each line of the file
 while($line = <INFILE>) {
@@ -80,22 +84,22 @@ while($line = <INFILE>) {
         @words = split(' ', $line);
         for $key (@words) {
             $hash{$key}++;
+            # hash{$key}
         }
-        
-        $word1;
-        $word2;
-        $i;
         
         # Create references to each pair of words in the words array
-        for $i (0 .. $words) {
+        for $i (0 .. --$words) {
             $word1 = $words[$i];
-            if($i != $words) {
-            $word2 = $words[$i+1];
-            }
+            $word2 = $words[++$i];
             
         }
-    }
+    } # End if loop
+    
+    # For debugging purposes
+    $lastline = $line;
 } # End while loop, done parsing file
+
+print $lastline;
 
 # Hash of Hashes
 # Found this: http://perldoc.perl.org/perldsc.html
@@ -117,6 +121,9 @@ for $key (keys %hash) {
 print "-----------------------------------\n";
 print "The number of tracks is: $numTracks\n";
 print "-----------------------------------\n";
+print $lastline;
+print $word1;
+print $word2;
 
 # Close the file handle
 close INFILE; 
