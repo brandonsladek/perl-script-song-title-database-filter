@@ -78,7 +78,7 @@ while($line = <INFILE>) {
     if($line =~ m{^[[:ascii:]]+$}) {
         $numTracks = $numTracks + 1;
         
-        # Split each title into words and add each unique word to hash mapped to frequency
+        # Split each title into words
         @words = split(' ', $line);
         
         # Create references to each pair of words in the words array
@@ -88,14 +88,18 @@ while($line = <INFILE>) {
             $word1 = pop @words;
             push @words, $word1;
             
-            # Increment bigram count
-            $hoh{$word1}{$word2}++;
+            # Increment bigram count if there are no stop words present
+            if ($word1 ne "a" && $word1 ne "an" && $word1 ne "and" && $word1 ne "by" && $word1 ne "for"
+                && $word1 ne "from" && $word1 ne "in" && $word1 ne "of" && $word1 ne "on" && $word1 ne "or"
+                && $word1 ne "out" && $word1 ne "the" && $word1 ne "to" && $word1 ne "with") {
+                    if ($word2 ne "a" && $word2 ne "an" && $word2 ne "and" && $word2 ne "by" && $word2 ne "for"
+                        && $word2 ne "from" && $word2 ne "in" && $word2 ne "of" && $word2 ne "on" && $word2 ne "or" && $word2 ne "out" && $word2 ne "the" && $word2 ne "to" && $word2 ne "with") {
+                            $hoh{$word1}{$word2}++;
+                        }
+                }
             
         } # End while loop
     } # End if loop
-    
-    # For debugging purposes
-    $lastline = $line;
     
 } # End while loop, done parsing file
 
@@ -132,7 +136,6 @@ foreach my $second_word (keys %{ $hoh{love} }) {
 print "$count\n\n";
 # ---------------------------------------------------------------------
 
-
 # User control loop
 print "Enter a word [Enter 'q' to quit]: ";
 $input = <STDIN>;
@@ -141,10 +144,53 @@ print "\n";
 
 while ($input ne "q"){
 	# Replace these lines with some useful code
-    
-    
-	print "Not yet implemented.  Goodbye.\n";
-	$input = 'q';
+    print "The most common word following $input is: ", mcw($input) ,"\n";
+    print make_song_title($input), "\n\n";
+	print "Enter a word [Enter 'q' to quit]: ";
+	$input = <STDIN>;
+    chomp($input);
+    print "\n";
 }
 
-# MORE OF YOUR CODE HERE....
+print "Goodbye.\n";
+
+# USER CONTROL FUNCTIONS HERE....
+
+# Return the most common word following the word passed in as an argument to mcw
+sub mcw{
+    my $word = shift;
+    $mcw;
+    my $freq = 0;
+    
+    # Check the frequency of each word that follows $word and return word with highest frequency
+    foreach $second_word (keys %{ $hoh{$word} } ) {
+        if ($hoh{$word}{$second_word} > $freq) {
+            $mcw = "$second_word";
+            $freq = $hoh{$word}{$second_word};
+        }
+    }
+    return $mcw;
+} # End of mcw function
+
+# Return song title
+sub make_song_title{
+    my $next_word = shift;
+    my $title = "";
+    my @title_words;
+    
+    # Add first word to array
+    push @title_words, $next_word;
+    
+    # Use array for title words in order to keep track of number of words
+    while ((defined mcw($next_word) and length mcw($next_word)) && @title_words <= 20) {
+        $next_word = mcw($next_word);
+        push @title_words, $next_word;
+    }
+    
+    # Create string with words in title_words array
+    for ($counter = 0; $counter < @title_words; $counter++) {
+        $title .= "$title_words[$counter] ";
+    }
+    
+    return $title;
+} # End of make_song_title function
