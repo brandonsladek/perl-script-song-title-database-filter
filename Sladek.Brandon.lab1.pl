@@ -25,11 +25,9 @@ open(INFILE, $ARGV[0]) or die "Cannot open $ARGV[0]: $!.\n";
 $lastline;
 $numTracks = 0;
 @words;
-%hash;
-%ihash;
+%hoh;
 $word1;
 $word2;
-$i;
 
 # This loops through each line of the file
 while($line = <INFILE>) {
@@ -82,48 +80,40 @@ while($line = <INFILE>) {
         
         # Split each title into words and add each unique word to hash mapped to frequency
         @words = split(' ', $line);
-        for $key (@words) {
-            $hash{$key}++;
-            # hash{$key}
-        }
         
         # Create references to each pair of words in the words array
-        for $i (0 .. --$words) {
-            $word1 = $words[$i];
-            $word2 = $words[++$i];
+        while (@words > 1) {
+            # Bigram consists of word1 and word2
+            $word2 = pop @words;
+            $word1 = pop @words;
+            push @words, $word1;
             
-        }
+            # Increment bigram count
+            $hoh{$word1}{$word2}++;
+            
+        } # End while loop
     } # End if loop
     
     # For debugging purposes
     $lastline = $line;
+    
 } # End while loop, done parsing file
 
-print $lastline;
+print "-----------------------------------------\n";
+print "The number of valid tracks is: $numTracks\n";
+print "-----------------------------------------\n";
 
-# Hash of Hashes
-# Found this: http://perldoc.perl.org/perldsc.html
-#
-# %HashOfHash = (
-#                something => {
-#                     word1 => word2
-#                     },
-#                nothing => {
-#                     word3 => word4
-#                     },
-#                );
+# This is how you insert and reference values in the hash of hashes
 
-# Print the frequency of each unique word in the list of song titles
-for $key (keys %hash) {
-    print "$key: ", $hash{$key}, "\n";
-}
+# my %yeah;
+# $yeah{"Hey"}{"You"} = 5;
+# $yeah{"What's"}{"Up"} = 7;
 
-print "-----------------------------------\n";
-print "The number of tracks is: $numTracks\n";
-print "-----------------------------------\n";
-print $lastline;
-print $word1;
-print $word2;
+# foreach my $first ( sort keys %yeah) {
+#    foreach my $second (keys %{ $yeah{$first} }) {
+#        print "$first, $second: $yeah{$first}{$second}\n";
+#    }
+# }
 
 # Close the file handle
 close INFILE; 
@@ -132,14 +122,27 @@ close INFILE;
 # title file and have populated your data structure of bigram counts.
 print "File parsed. Bigram model built.\n\n";
 
+# For debugging purposes ---------------------------------------------
+print "The words following love are:\n";
+my $count = 0;
+foreach my $second_word (keys %{ $hoh{love} }) {
+    print "$second_word: $hoh{love}{$second_word}\n";
+    $count++;
+}
+print "$count\n\n";
+# ---------------------------------------------------------------------
+
 
 # User control loop
 print "Enter a word [Enter 'q' to quit]: ";
 $input = <STDIN>;
 chomp($input);
-print "\n";	
+print "\n";
+
 while ($input ne "q"){
 	# Replace these lines with some useful code
+    
+    
 	print "Not yet implemented.  Goodbye.\n";
 	$input = 'q';
 }
