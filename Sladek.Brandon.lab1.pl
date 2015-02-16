@@ -1,15 +1,18 @@
-######################################### 	
-#    CSCI 305 - Programming Lab #1		
+################################################
+#    CSCI 305 Concepts of Programming Languages
+#              Programming Lab #1
 #										
 #  < Brandon Sladek >
 #  < brandonsladek@gmail.com >
 #										
-#########################################
+################################################
 
-# Replace the string value of the following variable with your names.
+# Names
 my $name = "<Brandon Sladek>";
 my $partner = "<Drew Antonich>";
-print "CSCI 305 Lab 1 submitted by $name and $partner.\n\n";
+
+print "------------------------------------------------------------------\n";
+print "CSCI 305 Lab 1 submitted by $name and $partner.\n";
 
 # Checks for the argument, fail if none given
 if($#ARGV != 0) {
@@ -21,7 +24,7 @@ if($#ARGV != 0) {
 open(INFILE, $ARGV[0]) or die "Cannot open $ARGV[0]: $!.\n";
 
 
-# YOUR VARIABLE DEFINITIONS HERE...
+# VARIABLE DEFINITIONS HERE...
 $lastline;
 $numTracks = 0;
 @words;
@@ -103,9 +106,10 @@ while($line = <INFILE>) {
     
 } # End while loop, done parsing file
 
-print "-----------------------------------------\n";
-print "The number of valid tracks is: $numTracks\n";
-print "-----------------------------------------\n";
+print "------------------------------------------------------------------\n";
+print "After using regular expressions to filter through the text";
+print " file,\nThe number of valid tracks in $ARGV[0] is: $numTracks\n";
+print "------------------------------------------------------------------\n";
 
 # This is how you insert and reference values in the hash of hashes
 
@@ -124,20 +128,13 @@ close INFILE;
 
 # At this point (hopefully) you will have finished processing the song 
 # title file and have populated your data structure of bigram counts.
-print "File parsed. Bigram model built.\n\n";
+print "File parsed. The bigram model has been built.\n\n";
 
-# For debugging purposes ---------------------------------------------
-print "The words following love are:\n";
-my $count = 0;
-foreach my $second_word (keys %{ $hoh{love} }) {
-    print "$second_word: $hoh{love}{$second_word}\n";
-    $count++;
-}
-print "$count\n\n";
-# ---------------------------------------------------------------------
+# NOTE to user
+print "NOTE: To find the most probable song title\nbased on a word, please enter a word below.\n\n";
 
 # User control loop
-print "Enter a word [Enter 'q' to quit]: ";
+print "Enter a word [Enter 'q' to quit]: >>> ";
 $input = <STDIN>;
 chomp($input);
 print "\n";
@@ -145,11 +142,25 @@ print "\n";
 while ($input ne "q"){
     
     # Print everything to standard output
-	print "---------------------------------------------------------------------------------\n";
-    print "The most common word following $input is: ", mcw($input) ,"\n\n";
-    print "The most probable song title is: \n\n\t", make_song_title($input), "\n\n";
+    print "---------------------------------------------------------------------------------\n";
+    print "Most common word following the word $input: ", mcw($input) ,"\n";
+    print "Number of distinct words that follow the word $input: ", num_trailing_words($input), "\n\n";
+    print "Most probable song title based on the word $input: \n\n\t", make_song_title($input), "\n\n";
     print "---------------------------------------------------------------------------------\n\n";
-    print "Enter a word [Enter 'q' to quit]: ";
+    print "Would you like the full bigram stats on the word? (Enter yes or no) >>> ";
+    $answer = <STDIN>;
+    chomp($answer);
+    print "\n";
+    
+    if ($answer eq "yes") {
+        print "---------------------------------------------------------------------------------\n";
+        print "Here is a list of the frequency of each unique word that follows $input:\n\n";
+        print bigram_stats($input);
+        print "---------------------------------------------------------------------------------\n";
+        print "\n\n";
+    }
+    
+    print "Enter a word [Enter 'q' to quit]: >>> ";
 	$input = <STDIN>;
     chomp($input);
     print "\n";
@@ -193,3 +204,21 @@ sub make_song_title{
     
     return $title;
 } # End of make_song_title function
+
+# Return the number of distinct words that follow the input argument word
+sub num_trailing_words{
+    my $input_word = shift;
+    my $count = 0;
+    foreach my $second_word (keys %{ $hoh{$input_word} }) {
+        $count++;
+    }
+    return $count;
+} # End of num_trailing_words function
+
+# Print the frequency of every unique word that follows the input argument word
+sub bigram_stats{
+    my $input_word = shift;
+    foreach my $second_word (keys %{ $hoh{$input_word} }) {
+        print "$second_word : $hoh{$input_word}{$second_word}\n";
+    }
+} # End of bigram_stats function
