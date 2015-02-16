@@ -143,10 +143,13 @@ chomp($input);
 print "\n";
 
 while ($input ne "q"){
-	# Replace these lines with some useful code
-    print "The most common word following $input is: ", mcw($input) ,"\n";
-    print make_song_title($input), "\n\n";
-	print "Enter a word [Enter 'q' to quit]: ";
+    
+    # Print everything to standard output
+	print "---------------------------------------------------------------------------------\n";
+    print "The most common word following $input is: ", mcw($input) ,"\n\n";
+    print "The most probable song title is: \n\n\t", make_song_title($input), "\n\n";
+    print "---------------------------------------------------------------------------------\n\n";
+    print "Enter a word [Enter 'q' to quit]: ";
 	$input = <STDIN>;
     chomp($input);
     print "\n";
@@ -159,16 +162,21 @@ print "Goodbye.\n";
 # Return the most common word following the word passed in as an argument to mcw
 sub mcw{
     my $word = shift;
-    $mcw;
+    $mcw = "";
     my $freq = 0;
     
+    # Only check for most common word if there actually is a word that follows $word
+    if (exists($hoh{$word})) {
+        
     # Check the frequency of each word that follows $word and return word with highest frequency
-    foreach $second_word (keys %{ $hoh{$word} } ) {
+        foreach $second_word (keys %{ $hoh{$word} } ) {
         if ($hoh{$word}{$second_word} > $freq) {
             $mcw = "$second_word";
             $freq = $hoh{$word}{$second_word};
         }
-    }
+      }
+    } # End if loop
+    
     return $mcw;
 } # End of mcw function
 
@@ -176,20 +184,11 @@ sub mcw{
 sub make_song_title{
     my $next_word = shift;
     my $title = "";
-    my @title_words;
     
-    # Add first word to array
-    push @title_words, $next_word;
-    
-    # Use array for title words in order to keep track of number of words
-    while ((defined mcw($next_word) and length mcw($next_word)) && @title_words <= 20) {
+    # Append the next most common word to the string while there is a word
+    while ($next_word =~ m/[a-z]/) {
+        $title .= "$next_word ";
         $next_word = mcw($next_word);
-        push @title_words, $next_word;
-    }
-    
-    # Create string with words in title_words array
-    for ($counter = 0; $counter < @title_words; $counter++) {
-        $title .= "$title_words[$counter] ";
     }
     
     return $title;
