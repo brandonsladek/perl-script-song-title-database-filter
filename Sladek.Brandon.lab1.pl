@@ -96,7 +96,8 @@ while($line = <INFILE>) {
                 && $word1 ne "from" && $word1 ne "in" && $word1 ne "of" && $word1 ne "on" && $word1 ne "or"
                 && $word1 ne "out" && $word1 ne "the" && $word1 ne "to" && $word1 ne "with") {
                     if ($word2 ne "a" && $word2 ne "an" && $word2 ne "and" && $word2 ne "by" && $word2 ne "for"
-                        && $word2 ne "from" && $word2 ne "in" && $word2 ne "of" && $word2 ne "on" && $word2 ne "or" && $word2 ne "out" && $word2 ne "the" && $word2 ne "to" && $word2 ne "with") {
+                        && $word2 ne "from" && $word2 ne "in" && $word2 ne "of" && $word2 ne "on" && $word2 ne "or"
+                        && $word2 ne "out" && $word2 ne "the" && $word2 ne "to" && $word2 ne "with") {
                             $hoh{$word1}{$word2}++;
                         }
                 }
@@ -189,13 +190,14 @@ sub make_song_title{
     # Append the next most common word to the string while there is a word
     while ($break == 1 && $next_word =~ m/[a-z]/) {
         $used_words{$next_word}++;
+        $title .= "$next_word ";
+        $next_word = mcw($next_word);
+        
         foreach $word (keys %used_words) {
             if ($next_word eq $word) {
                 $break = 0;
             }
         }
-        $title .= "$next_word ";
-        $next_word = mcw($next_word);
     }
     
     return $title;
