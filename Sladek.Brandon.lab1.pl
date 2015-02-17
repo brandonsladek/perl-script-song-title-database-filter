@@ -111,18 +111,6 @@ print "After using regular expressions to filter through the text";
 print " file,\nThe number of valid tracks in $ARGV[0] is: $numTracks\n";
 print "------------------------------------------------------------------\n";
 
-# This is how you insert and reference values in the hash of hashes
-
-# my %yeah;
-# $yeah{"Hey"}{"You"} = 5;
-# $yeah{"What's"}{"Up"} = 7;
-
-# foreach my $first ( sort keys %yeah) {
-#    foreach my $second (keys %{ $yeah{$first} }) {
-#        print "$first, $second: $yeah{$first}{$second}\n";
-#    }
-# }
-
 # Close the file handle
 close INFILE; 
 
@@ -195,9 +183,17 @@ sub mcw{
 sub make_song_title{
     my $next_word = shift;
     my $title = "";
+    my %used_words;
+    my $break = 1;
     
     # Append the next most common word to the string while there is a word
-    while ($next_word =~ m/[a-z]/) {
+    while ($break == 1 && $next_word =~ m/[a-z]/) {
+        $used_words{$next_word}++;
+        foreach $word (keys %used_words) {
+            if ($next_word eq $word) {
+                $break = 0;
+            }
+        }
         $title .= "$next_word ";
         $next_word = mcw($next_word);
     }
