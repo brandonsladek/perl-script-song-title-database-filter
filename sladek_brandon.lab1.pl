@@ -184,16 +184,29 @@ sub mcw{
         foreach $second_word (keys %{ $hoh{$word} } ) {
             
             if ($freq != 0 && $hoh{$word}{$second_word} == $freq) {
+                
                 # If two or more words have equal frequencies, randomly pick most common word
                 if (int(rand(10)) > 4) {
-                    $mcw = "$second_word";
-                    $freq = $hoh{$word}{$second_word};
+                    
+                    # Make sure $second_word is actually a word
+                    if ($second_word =~ m/[a-z]/) {
+                        
+                        $mcw = "$second_word";
+                        $freq = $hoh{$word}{$second_word};
+                        
+                    }
                 }
             }
             # If the current second_word has a higher frequency than the last one, change mcw to second_word
             if ($hoh{$word}{$second_word} > $freq) {
-                $mcw = "$second_word";
-                $freq = $hoh{$word}{$second_word};
+                
+                # Make sure $second_word is actually a word
+                if ($second_word =~ m/[a-z]/) {
+                    
+                    $mcw = "$second_word";
+                    $freq = $hoh{$word}{$second_word};
+                    
+                }
         }
       }
     } # End if loop
