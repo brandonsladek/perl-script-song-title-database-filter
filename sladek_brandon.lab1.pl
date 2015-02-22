@@ -105,10 +105,10 @@ while($line = <INFILE>) {
                             # Add bigram to hash of hashes
                             $hoh{$word1}{$word2}++;
                         }
-                } # End double if loop
+                } # End double if
             
         } # End while loop
-    } # End if loop
+    } # End if
     
 } # End while loop, done parsing file
 
@@ -209,7 +209,7 @@ sub mcw{
                 }
         }
       }
-    } # End if loop
+    } # End if
     
     return $mcw;
 } # End of mcw function
